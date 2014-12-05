@@ -1,6 +1,7 @@
 package main
 
 import (
+	hsv "code.google.com/p/sadbox/color"
 	"image"
 	"image/color"
 	"image/png"
@@ -35,7 +36,7 @@ func getColor(c complex128) color.RGBA {
 	for i := 0; i < MAX; i++ {
 		z = z*z + c
 		if cmplx.Abs(z) > 4 {
-			r, g, b := HSVToRGB(float64((i*7)%360), 1, 1)
+			r, g, b := hsv.HSVToRGB(float64((i*7)%360), 1, 1)
 			return color.RGBA{r, g, b, 0xff}
 		}
 	}
@@ -139,7 +140,6 @@ func main() {
 	renderImageConcurrent(concurrentImage, -2.2-1.2i, 1+1.2i)
 
 	log.Println(time.Since(t2))
-	//saveImage(path.Join(os.TempDir(), "z.png", im))
 
 	saveImage("concurrent_image.png", concurrentImage)
 	f.Close()
@@ -150,36 +150,9 @@ func main() {
 func saveImage(path string, i image.Image) {
 	w, _ := os.Create(path)
 	if err := png.Encode(w, i); err != nil {
-		log.Println("Error writing image on Disk")
+		log.Println("Error writing image on disk")
 		os.Exit(1)
 	}
-}
-
-func HSVToRGB(h, s, v float64) (r, g, b uint8) {
-	var fR, fG, fB float64
-	i := math.Floor(h * 6)
-	f := h*6 - i
-	p := v * (1.0 - s)
-	q := v * (1.0 - f*s)
-	t := v * (1.0 - (1.0-f)*s)
-	switch int(i) % 6 {
-	case 0:
-		fR, fG, fB = v, t, p
-	case 1:
-		fR, fG, fB = q, v, p
-	case 2:
-		fR, fG, fB = p, v, t
-	case 3:
-		fR, fG, fB = p, q, v
-	case 4:
-		fR, fG, fB = t, p, v
-	case 5:
-		fR, fG, fB = v, p, q
-	}
-	r = uint8((fR * 255) + 0.5)
-	g = uint8((fG * 255) + 0.5)
-	b = uint8((fB * 255) + 0.5)
-	return
 }
 
 //#endregion
