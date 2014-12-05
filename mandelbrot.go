@@ -1,3 +1,5 @@
+// <author>pichuio ☯</author>
+
 package main
 
 import (
@@ -6,7 +8,6 @@ import (
 	"image/color"
 	"image/png"
 	"log"
-	"math"
 	"math/cmplx"
 	"os"
 	"runtime"
@@ -37,6 +38,7 @@ func getColor(c complex128) color.RGBA {
 		z = z*z + c
 		if cmplx.Abs(z) > 4 {
 			r, g, b := hsv.HSVToRGB(float64((i*7)%360), 1, 1)
+			//log.Println(r, g, b)
 			return color.RGBA{r, g, b, 0xff}
 		}
 	}
@@ -121,6 +123,9 @@ func main() {
 
 	f, _ := os.Create("logfile")
 	log.SetOutput(f)
+
+	log.Println("mandelbrot set")
+	log.Println("author: pichuio ☯\n\nGeneral Information: ")
 	log.Println("Number of used Cores: ", numcpu)
 
 	im := image.NewRGBA(image.Rect(0, 0, 800, 600))
@@ -139,9 +144,11 @@ func main() {
 
 	renderImageConcurrent(concurrentImage, -2.2-1.2i, 1+1.2i)
 
-	log.Println(time.Since(t2))
+	log.Println(time.Since(t2), "\n")
 
 	saveImage("concurrent_image.png", concurrentImage)
+
+	log.Println("finished rendering")
 	f.Close()
 }
 
